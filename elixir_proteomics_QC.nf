@@ -201,7 +201,7 @@ process makeblastdb {
  */
 
 process thermofilerawparser {
-    label 'convert'
+    label 'thermoconvert'
   
     tag { "${qcode}_${checksum}" }
 
@@ -859,21 +859,44 @@ mZML_params_for_mapping.map{
  */
  process collectResults {
     tag { sample_id }
-    publishDir "${out_folder}/${sample_id}", mode: 'copy'
-
+    
     input:
     set sample_id, internal_code, checksum, file(mzidfile), file("*") from mZML_params_for_delivery.join(jsonToBeSent)
 
     output:
-    file("${sample_id}.json")
+    set sample_id, file("${sample_id}.json") into json_to_be_converted
     
     script:
     """
 	json_merger.sh \$PWD ${sample_id}.json
     """
 }
- 
 
+ process convertResults {
+    tag { sample_id }
+    label 'mzqcconvert'
+    
+    publishDir "${out_folder}/${sample_id}", mode: 'copy'
+
+    input:
+    set sample_id, file(json) from json_to_be_converted
+
+    output:
+    file("${sample_id}.mzQC")
+    
+    script:
+    """
+	qcloud_mzqc_conversion_v0.1.py -input ${json} -output ${sample_id}.mzQC 
+    """
+}
+
+workflow.onComplete {
+    println "Pipeline ELIXIR@Proteomics QC PIPELINE!"
+    println "Started at  $workflow.start" 
+    println "Finished at $workflow.complete"
+    println "Time elapsed: $workflow.duration"
+    println "Execution status: ${ workflow.success ? 'OK' : 'failed' }"
+}
 
 /*
  * Functions
