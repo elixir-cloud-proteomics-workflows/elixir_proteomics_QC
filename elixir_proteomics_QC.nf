@@ -201,8 +201,8 @@ process makeblastdb {
  */
 
 process thermofilerawparser {
-    label 'thermoconvert'
-  
+    label 'thermoconvert'  
+    publishDir "${out_folder}/${sample_id}", mode: 'copy', pattern: "*.mzML"	   
     tag { "${qcode}_${checksum}" }
 
     input:
@@ -266,6 +266,8 @@ input_pipe_complete_first_step
 */
 
 process run_shotgun {
+    publishDir "${out_folder}/${sample_id}", mode: 'copy', pattern: "*.qcml"	   
+    publishDir "${out_folder}/${sample_id}", mode: 'copy', pattern: "*.featureXML"	   
 
     tag { sample_id }
     
