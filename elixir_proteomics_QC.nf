@@ -202,7 +202,7 @@ process makeblastdb {
 
 process thermofilerawparser {
     label 'thermoconvert'  
-    publishDir "${out_folder}/${sample_id}", mode: 'copy', pattern: "*.mzML"	   
+    publishDir "${out_folder}/${qcode}_${checksum}", mode: 'copy', pattern: "*.mzML"	   
     tag { "${qcode}_${checksum}" }
 
     input:
