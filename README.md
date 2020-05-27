@@ -33,7 +33,7 @@ Where:
 ## Usage: 
 
 1. Run the pipeline in background mode: `nextflow run -bg elixir_proteomics_QC.nf > elixir_qc.log`. The first time you run this command Nextflow will automatically pull the last pipeline container version labeled as `biocorecrg/qcloud:2.2` (1.5GB aprox.), ThermoRawFileParser container `biocorecrg-thermorawparser-0.1.img` (438M) that converts RAW files to mzML format and mzQC converter `biocorecrg-mzqc_conv-0.1.img` (242M), all three files stored at `$baseDir/image`.
-- Once all images have been pulled, you can copy any RAW file to the incoming folder. Its filename must be in a specific format to be successfully processed by the pipeline: 
+2. Once all images have been pulled, you can copy any RAW file to the incoming folder. Its filename must be in a specific format to be successfully processed by the pipeline: 
     - All files must be zipped with the same name as the RAW file. 
     - Its name must follow the following convention: `QC02_checksum.raw.zip`, where: 
         - QC02, wich is an internal code to identify complex human samples (HeLa). 
