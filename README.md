@@ -1,9 +1,5 @@
 # ELIXIR QC proteomics pipeline
 
-QCloud is a cloud-based system to support proteomics laboratories in daily quality assessment using a user-friendly interface, easy setup, automated data processing and archiving, and unbiased instrument evaluation. https://qcloud.crg.eu, paper: https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0189209
-
-With this tutorial you'll we able to install all the QCloud system in your local server and HPC Cluster.  
-
 ## Global System Requirements: 
     - HPC Cluster running CentOS 7 x64. Do not install it in a desktop PC.
     - Singularity container >= 2.6.1.
@@ -27,7 +23,7 @@ params {
 Where: 
 - qconfig: path to qc.config file. Do not change it.  
 - zipfiles: incoming folder where the RAW files (zipped) will be put to be processed by the pipeline. 
-- outfolder: folder where the output QC metrics JSON files are going to be stored. 
+- out_folder: folder where the output QC metrics files are going to be stored. 
 - fasta_tab: file with used FASTA databases. Do not change it. 
 - watch: "YES" if you want the pipeline to be automatically started when a file is moved to `zipfiles` folder. 
 - email: notification email. 
@@ -36,12 +32,12 @@ Where:
 
 ## Usage: 
 
-- Run the pipeline in background mode: `nextflow run -bg elixir_proteomics_QC.nf > elixir_qc.log`. The first time you run this command Nextflow will automatically pull the last QCloud container version labeled as `biocorecrg/qcloud:2.2` (1.5GB aprox.), ThermoRawFileParser container `biocorecrg-thermorawparser-0.1.img` (438M) that converts RAW files to mzML format and mzQC converter `biocorecrg-mzqc_conv-0.1.img` (242M), all three files stored at `$baseDir/image`.
-- Once all images have been pulled, you can copy any RAW file. Its filename must be in a specific format to be successfully processed by the pipeline: 
+1. Run the pipeline in background mode: `nextflow run -bg elixir_proteomics_QC.nf > elixir_qc.log`. The first time you run this command Nextflow will automatically pull the last pipeline container version labeled as `biocorecrg/qcloud:2.2` (1.5GB aprox.), ThermoRawFileParser container `biocorecrg-thermorawparser-0.1.img` (438M) that converts RAW files to mzML format and mzQC converter `biocorecrg-mzqc_conv-0.1.img` (242M), all three files stored at `$baseDir/image`.
+- Once all images have been pulled, you can copy any RAW file to the incoming folder. Its filename must be in a specific format to be successfully processed by the pipeline: 
     - All files must be zipped with the same name as the RAW file. 
     - Its name must follow the following convention: `QC02_checksum.raw.zip`, where: 
         - QC02, wich is an internal code to identify complex human samples (HeLa). 
-        - checksum: the md5sum of the RAW file (not the zipped one). 
+        - Checksum: the md5sum of the RAW file (not the zipped one). 
         - For instance: `QC02_c010cb81200806e9113919213772aaa9.raw.zip`
 
 ## Output files: 
@@ -56,8 +52,7 @@ Once the pipeline has been processed all the files moved to `$baseDir/incoming`f
   
 ## Credits (specifically for the bioinformatics part): 
 - QCloud Pipeline: Luca Cozzuto and Roger Olivella. 
-- ThermoFileRawParser: Niels Hulstaert (https://github.com/compomics/ThermoRawFileParser#thermorawfileparser). 
-- rawDiag: Christian Panse (https://github.com/fgcz/rawDiag). 
+- ThermoFileRawParser: Niels Hulstaert (https://github.com/compomics/ThermoRawFileParser#thermorawfileparser). ). 
 
 ## Credits (for the entire project): 
 
