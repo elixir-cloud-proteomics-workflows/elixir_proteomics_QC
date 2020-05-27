@@ -40,23 +40,28 @@ Where:
 - Once all images have been pulled, you can copy any RAW file. Its filename must be in a specific format to be successfully processed by the pipeline: 
     - All files must be zipped with the same name as the RAW file. 
     - Its name must follow the following convention: `QC02_checksum.raw.zip`, where: 
-        - QC02, wich is an internal code to  (HeLa). 
+        - QC02, wich is an internal code to identify complex human samples (HeLa). 
         - checksum: the md5sum of the RAW file (not the zipped one). 
-        - For instance: `20200514_LUMOS1_d2fc2cbf-e632-4f39-ba5a-6f59de0b7c4e_QC01_c010cb81200806e9113919213772aaa9.zip`
+        - For instance: `QC02_c010cb81200806e9113919213772aaa9.raw.zip`
 
-## Global Final steps: 
+## Output files: 
 
-- Troubleshooting: check JAR and Nexftlow logs. We're working to extend this section.  
+Once the pipeline has been processed all the files moved to `$baseDir/incoming`folder, it'll create a folder with the same name as the RAW files in the output folder defined at `params.config`. Inside this folder you'll find: 
 
-
-## Credits (specifically for the bioinformatics part of QCloud): 
+- mzQC: the HUPO-PSI standard format file for QC metrics. 
+- mzID: the HUPO-PSI standard format file for protein identification. 
+- featureXML: OpenMS features. 
+- qcML: OpenMS QC metrics. 
+- mzML: the HUPO-PSI standard format file for mass spec raw files. 
+  
+## Credits (specifically for the bioinformatics part): 
 - QCloud Pipeline: Luca Cozzuto and Roger Olivella. 
 - ThermoFileRawParser: Niels Hulstaert (https://github.com/compomics/ThermoRawFileParser#thermorawfileparser). 
 - rawDiag: Christian Panse (https://github.com/fgcz/rawDiag). 
 
-## Credits (for the entire QCloud project): 
+## Credits (for the entire project): 
 
-Cristina Chiva, Eva Borràs, Guadalupe Espadas, Olga Pastor, Amanda Solé, Eduard Sabidó.
+Mathias Walzer, Juan Antonio Vizcaíno and Eduard Sabidó. 
 
 ## License: 
 
