@@ -1,61 +1,65 @@
-# elixir_proteomics_QC
-[![Nextflow version](https://img.shields.io/badge/nextflow-%E2%89%A50.31.0-brightgreen.svg)](https://www.nextflow.io/)
-[![Docker Build Status](https://img.shields.io/docker/automated/biocorecrg/qcloud.svg)](https://cloud.docker.com/u/biocorecrg/repository/docker/biocorecrg/qcloud/builds)
+# ELIXIR QC proteomics pipeline
 
-gitter chat is https://gitter.im/elixir_proteomics_QC/community
+QCloud is a cloud-based system to support proteomics laboratories in daily quality assessment using a user-friendly interface, easy setup, automated data processing and archiving, and unbiased instrument evaluation. https://qcloud.crg.eu, paper: https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0189209
 
-## New in this version v.0.2: 
+With this tutorial you'll we able to install all the QCloud system in your local server and HPC Cluster.  
 
-* ThermoFileRawParser (https://github.com/compomics/ThermoRawFileParser) fully inetgrated, so now the input files are (zipped) RAW files instead of mzMLs. 
+## Global System Requirements: 
+    - HPC Cluster running CentOS 7 x64. Do not install it in a desktop PC.
+    - Singularity container >= 2.6.1.
+    - Nextflow >= 20.01.0.5264.
+    - At least 3GB free disk space.  
 
-* At the end of the pipeline all the JSON files for each QC metrics are merged in just one file. 
+## Installation: 
 
-## Installation instructions: 
-
-* Install Singularity and Nextflow.
-* Git clone pipeline: 
-
+1. `git clone https://github.com/proteomicsunitcrg/qcloud2-pipeline.git`, checkout "local" branch and `chmod -R 770` at the pipeline root folder. 
+2. Set up Nextflow params.config file: 
 ```
-git clone https://github.com/elixir-cloud-proteomics-workflows/elixir_proteomics_QC.git
+params {
+    qconfig          = "$baseDir/qc.config"
+    zipfiles         = "$baseDir/incoming/*.zip"
+    out_folder       = "output"
+    fasta_tab        = "$baseDir/fasta.tsv"
+    watch            = "YES"
+    email            = "roger.olivella@crg.eu"
+}
 ```
+Where: 
+- qconfig: path to qc.config file. Do not change it.  
+- zipfiles: incoming folder where the RAW files (zipped) will be put to be processed by the pipeline. 
+- outfolder: folder where the output QC metrics JSON files are going to be stored. 
+- fasta_tab: file with used FASTA databases. Do not change it. 
+- watch: "YES" if you want the pipeline to be automatically started when a file is moved to `zipfiles` folder. 
+- email: notification email. 
 
-* Configure Nextflow: params.config 
+3. Set up nextflow.config file: modify this file according to your HPC Cluster queues name/s and the memory and CPUs available. 
 
-```
-zipfiles         = "$baseDir/path_to/*.zip"
-```
+## Usage: 
 
-Now input files must be zipped RAW files with this format: 
+- Run the pipeline in background mode: `nextflow run -bg elixir_proteomics_QC.nf > elixir_qc.log`. The first time you run this command Nextflow will automatically pull the last QCloud container version labeled as `biocorecrg/qcloud:2.2` (1.5GB aprox.), ThermoRawFileParser container `biocorecrg-thermorawparser-0.1.img` (438M) that converts RAW files to mzML format and mzQC converter `biocorecrg-mzqc_conv-0.1.img` (242M), all three files stored at `$baseDir/image`.
+- Once all images have been pulled, you can copy any RAW file. Its filename must be in a specific format to be successfully processed by the pipeline: 
+    - All files must be zipped with the same name as the RAW file. 
+    - Its name must follow the following convention: `QC02_checksum.raw.zip`, where: 
+        - QC02, wich is an internal code to  (HeLa). 
+        - checksum: the md5sum of the RAW file (not the zipped one). 
+        - For instance: `20200514_LUMOS1_d2fc2cbf-e632-4f39-ba5a-6f59de0b7c4e_QC01_c010cb81200806e9113919213772aaa9.zip`
 
-```
-{QC01|QC02}_{checksum}.raw.zip 
-```
+## Global Final steps: 
 
-where {QC01|QC02} is the sample type, QC01 for BSA and QC01 for HeLa (Human). 
+- Troubleshooting: check JAR and Nexftlow logs. We're working to extend this section.  
 
-For instance: 
 
-QC01_93d2a97b9d0b35c9668663223bdef998.raw.zip
+## Credits (specifically for the bioinformatics part of QCloud): 
+- QCloud Pipeline: Luca Cozzuto and Roger Olivella. 
+- ThermoFileRawParser: Niels Hulstaert (https://github.com/compomics/ThermoRawFileParser#thermorawfileparser). 
+- rawDiag: Christian Panse (https://github.com/fgcz/rawDiag). 
 
-* Configure Nextflow: nextflow.config 
+## Credits (for the entire QCloud project): 
 
-```
-queue='name_of_cluster_queue'
-```
-and leave as it is: 
+Cristina Chiva, Eva Borràs, Guadalupe Espadas, Olga Pastor, Amanda Solé, Eduard Sabidó.
 
-```
-process.container = 'biocorecrg/qcloud:2.2'
-container = 'biocorecrg/thermorawparser:0.1'
-```
+## License: 
 
-This will download the Docker image from Dockerhub for the knime part (1.3GB aprox) and ThermoFileRawParse part (375MB). 
+Pending. 
 
-* Run the pipeline: 
-
-```
-nextflow run elixir_proteomics_QC.nf -bg
-```
-Last, but not least: 
-
-* Copy zipped RAWs to the `"$baseDir/path_to/*.zip` folder. 
+#### Last update by @rolivella on 27/05/2020
