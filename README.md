@@ -57,9 +57,3 @@ Once the pipeline has been processed all the files moved to `$baseDir/incoming`f
 ## Credits (for the entire project): 
 
 Mathias Walzer, Juan Antonio Vizcaíno and Eduard Sabidó. 
-
-## License: 
-
-Pending. 
-
-#### Last update by @rolivella on 27/05/2020
